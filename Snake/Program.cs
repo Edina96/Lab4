@@ -129,6 +129,12 @@ namespace Snake
 			Console.SetCursorPosition(45, 10);
 			Console.WriteLine("Press enter to exit the game.");
 			Console.SetCursorPosition(60, 11);
+
+			Console.ReadLine();
+
+			Console.Clear();
+			scoreBoard();
+			Console.WriteLine("Press ENTER to quit game");
 		}
 
 		public void winGame(int negativePoints, int eatenTimes)
@@ -152,7 +158,33 @@ namespace Snake
 				}
 
 				Console.ReadLine();
+				Console.Clear();
+				scoreBoard();
+				Console.WriteLine("Press ENTER to quit game");
+
+				string action = Console.ReadLine(); //Enter key pressed, exit game
+				if (action == "")
+				{
+					Environment.Exit(0);
+				}
 			}
+		}
+
+		public void scoreBoard()
+		{
+			Console.Clear();
+			Console.SetCursorPosition(0, 1);
+			Console.WriteLine("SCOREBOARD");
+			Console.WriteLine("-----------------------------");
+			using (StreamReader score = new StreamReader("score.txt"))
+			{
+				string line;
+				while ((line = score.ReadLine()) != null)
+				{
+					Console.WriteLine(line);
+				}
+			}
+			Console.WriteLine("-----------------------------");
 		}
 
 		//Defines the Main method
