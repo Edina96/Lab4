@@ -1,3 +1,8 @@
 YOU LOSE!
+<<<<<<< HEAD
 Points: -153
 Negative Points: 53
+=======
+Points: -288
+Negative Points: 188
+>>>>>>> add-help-menu
