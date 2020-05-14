@@ -41,18 +41,12 @@ namespace Snake
 	{
 		public void helpMenu()
 		{
-			Console.SetCursorPosition(56, 7);
 			Console.ForegroundColor = ConsoleColor.White;
 			Console.WriteLine("Help Menu");
-			Console.SetCursorPosition(55, 8);
 			Console.WriteLine("Instruction:");
-			Console.SetCursorPosition(25, 9);
 			Console.WriteLine("1.Press the arrow key on the keyboard to control the direction of the snake.");
-			Console.SetCursorPosition(25, 10);
 			Console.WriteLine("2.Eat the food to increase your score.");
-			Console.SetCursorPosition(25, 11);
 			Console.WriteLine("3.Prevent the snake from hitting the obsatcles or its body.");
-			Console.SetCursorPosition(45, 12);
 			Console.WriteLine("Press enter to start the game.");
 			string startGame = Console.ReadLine();
 			if (startGame == "")
@@ -145,7 +139,7 @@ namespace Snake
 			}
 
 			//if (userPoints < 0) userPoints = 0;
-			userPoints = Math.Max(userPoints, 0); //Compare userPoints to 0 & return whichever is larger
+			//userPoints = Math.Max(userPoints, 0); //Compare userPoints to 0 & return whichever is larger
 			Console.SetCursorPosition(50, 9);
 			Console.WriteLine("Your points are: {0}", userPoints);
 
@@ -210,6 +204,14 @@ namespace Snake
 			Console.WriteLine("-----------------------------");
 		}
 
+		public void displayScore(Queue<Position> snakeElements, int negativePoints)
+		{
+			int userPoints = (snakeElements.Count - 6) * 100 - negativePoints;
+			Console.SetCursorPosition(5, 0);
+			Console.Write("User Points: " + userPoints + "  ");
+		}
+
+
 		//Defines the Main method
 		static void Main(string[] args)
 		{
@@ -254,14 +256,13 @@ namespace Snake
 			Program program = new Program();
 			program.helpMenu();
 			program.playBackgroundSound();
-			Console.SetCursorPosition(70, 0);
-			Console.Write("Negative Points: " + negativePoints);
 
 			program.placeObstacles(obstacles);
 
 			//Create a Queue to store elements in FIFO (first-in, first out) style
 			Queue<Position> snakeElements = new Queue<Position>();
 			program.addSnakeElements(snakeElements);
+			program.displayScore(snakeElements, negativePoints);
 
 			///<summary>
 			/// Set up and draw the food of the snake at random position.
@@ -282,7 +283,7 @@ namespace Snake
 			/// </summary>
 			while (true)
 			{
-				negativePoints++;
+				//negativePoints++;
 
 				if (Console.KeyAvailable)
 				{
@@ -349,6 +350,8 @@ namespace Snake
 				/// Direction of the head of the snake when the user changes the direction of the snake.
 				/// </summary>
 				snakeElements.Enqueue(snakeNewHead);
+				program.displayScore(snakeElements, negativePoints);
+
 				Console.SetCursorPosition(snakeNewHead.col, snakeNewHead.row);
 				Console.ForegroundColor = ConsoleColor.Gray;
 
@@ -402,6 +405,7 @@ namespace Snake
 					Position last = snakeElements.Dequeue();
 					Console.SetCursorPosition(last.col, last.row);
 					Console.Write(" ");
+					program.displayScore(snakeElements, negativePoints);
 				}
 
 				///<summary>
@@ -410,8 +414,6 @@ namespace Snake
 				if (Environment.TickCount - lastFoodTime >= foodDissapearTime)
 				{
 					negativePoints = negativePoints + 50;
-					Console.SetCursorPosition(70, 0);
-					Console.Write("Negative Points: " + negativePoints);
 
 					Console.SetCursorPosition(food.col, food.row);
 					Console.Write(" ");

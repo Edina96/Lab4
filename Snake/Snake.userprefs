@@ -7,11 +7,7 @@
   <MonoDevelop.Ide.ItemProperties.Snake PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Program.cs">
     <Files>
-<<<<<<< HEAD
-      <File FileName="Program.cs" Line="217" Column="1" />
-=======
-      <File FileName="Program.cs" Line="308" Column="26" />
->>>>>>> add-help-menu
+      <File FileName="Program.cs" Line="428" Column="5" />
       <File FileName="App.config" Line="6" Column="17" />
     </Files>
   </MonoDevelop.Ide.Workbench>
