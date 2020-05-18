@@ -1,3 +1,4 @@
 YOU LOSE!
-Points: -100
+Points: 300
 Negative Points: 0
+Bonus: 100
