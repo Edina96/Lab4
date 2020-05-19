@@ -1,4 +1,6 @@
-YOU LOSE!
-Points: 300
-Negative Points: 0
-Bonus: 100
+YOU WIN!
+Game Level: 5
+Food Eaten Times: 5
+Points: 250
+Negative Points: 50
+Bonus: 0
