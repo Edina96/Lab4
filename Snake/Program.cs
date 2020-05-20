@@ -6,7 +6,6 @@ using System.Collections;
 using System.Threading;
 using System.Media;
 using System.IO;
-//using System.Diagnostics;
 /* Above are the namespace declaration used in the program.
 This is used so a fully qualified name does not need to be
 specified every time that a method that is contained within 
@@ -40,8 +39,6 @@ namespace Snake
 	//Declare class named Program with only one method called Main
 	class Program
 	{
-<<<<<<< HEAD
-=======
 		public void helpMenu()
 		{
 			Console.ForegroundColor = ConsoleColor.White;
@@ -50,9 +47,15 @@ namespace Snake
 			Console.WriteLine("1.Press the arrow key on the keyboard to control the direction of the snake.");
 			Console.WriteLine("2.Eat the food to increase your score.");
 			Console.WriteLine("3.Prevent the snake from hitting the obsatcles or its body.");
->>>>>>> add-correction
 			Console.WriteLine("Press enter to start the game.");
 			string startGame = Console.ReadLine();
+			if (startGame == "")
+			{
+				Console.Clear();
+				return;
+			}
+		}
+
 		public void playBackgroundSound()
 		{
 			SoundPlayer bgSound = new SoundPlayer("../../Resources/POL-azure-waters-short.wav");
@@ -80,7 +83,7 @@ namespace Snake
 			{
 				Console.ForegroundColor = ConsoleColor.Cyan;
 				Console.SetCursorPosition(obstacle.col, obstacle.row);
-				Console.Write("="); //A method to display value, in this case "="
+				Console.Write("▒");
 			}
 		}
 
@@ -88,7 +91,18 @@ namespace Snake
 		{
 			Console.SetCursorPosition(food.col, food.row);
 			Console.ForegroundColor = ConsoleColor.Yellow;
-			Console.Write("@");
+			Console.OutputEncoding = System.Text.Encoding.UTF8;
+			Console.Write("♥♥");
+		}
+
+		public void drawSpecialFood(Position bonusfood, Random randomNumbersGenerator, int eatenTimes)
+		{
+			if (eatenTimes == 2)
+			{
+				Console.SetCursorPosition(bonusfood.col, bonusfood.row);
+				Console.ForegroundColor = ConsoleColor.Magenta;
+				Console.Write("%");
+			}
 		}
 
 		public void addSnakeElements(Queue<Position> snakeElements)
@@ -120,13 +134,13 @@ namespace Snake
 			if (direction == down) Console.Write("v");
 		}
 
-		public void gameOver(Queue<Position> snakeElements, int negativePoints, int lvlNum, int foodDissapearTime, int eatenTimes)
+		public void gameOver(Queue<Position> snakeElements, int negativePoints, int bonus, int lvlNum)
 		{
 			playGameOverSound();
 			Console.SetCursorPosition(55, 8);
 			Console.ForegroundColor = ConsoleColor.Red;
 			Console.WriteLine("Game over!");
-			int userPoints = (snakeElements.Count - 6) * 100 - negativePoints;
+			int userPoints = (snakeElements.Count - 6) * 100 - negativePoints + bonus;
 
 			using (StreamWriter writetext = new StreamWriter("score.txt"))
 			{
@@ -134,6 +148,7 @@ namespace Snake
 				writetext.WriteLine("Game Level: " + lvlNum);
 				writetext.WriteLine("Points: " + userPoints);
 				writetext.WriteLine("Negative Points: " + negativePoints);
+				writetext.WriteLine("Bonus: " + bonus);
 			}
 
 			//if (userPoints < 0) userPoints = 0;
@@ -164,7 +179,7 @@ namespace Snake
 			}
 		}
 
-		public void winGame(int negativePoints, int eatenTimes, int lvlNum, Queue<Position> snakeElements)
+		public void winGame(int negativePoints, int eatenTimes, Queue<Position> snakeElements, int bonus, int lvlNum)
 		{
 			if (eatenTimes == 5)
 			{
@@ -176,7 +191,7 @@ namespace Snake
 				Console.WriteLine("Congratulation! You've reached Level 5 & food eaten time is 5");
 				Console.SetCursorPosition(50, 12);
 				Console.WriteLine("Press ENTER to display ScoreBoard.");
-				int userPoints = (snakeElements.Count - 6) * 100 - negativePoints;
+				int userPoints = (snakeElements.Count - 6) * 100 - negativePoints + bonus;
 
 				using (StreamWriter writetext = new StreamWriter("score.txt"))
 				{
@@ -185,6 +200,7 @@ namespace Snake
 					writetext.WriteLine("Food Eaten Times: " + eatenTimes);
 					writetext.WriteLine("Points: " + userPoints);
 					writetext.WriteLine("Negative Points: " + negativePoints);
+					writetext.WriteLine("Bonus: " + bonus);
 				}
 
 				Console.ReadLine();
@@ -219,15 +235,10 @@ namespace Snake
 			Console.WriteLine("-----------------------------");
 		}
 
-		public void displayScore(Queue<Position> snakeElements, int negativePoints)
+		public void displayScore(Queue<Position> snakeElements, int negativePoints, int bonus)
 		{
-<<<<<<< HEAD
-			int userPoints = (snakeElements.Count - 6) * 100 - negativePoints;
-			Console.SetCursorPosition(70, 0);
-=======
 			int userPoints = (snakeElements.Count - 6) * 100 - negativePoints + bonus;
 			Console.SetCursorPosition(5, 0);
->>>>>>> add-correction
 			Console.Write("User Points: " + userPoints + "  ");
 		}
 
@@ -253,6 +264,7 @@ namespace Snake
 			int negativePoints = 0;
 			int eatenTimes = 0;
 			int lvlNum = 1;
+			int bonus = 0;
 
 			/* Create an array of structures named directions and pre-define the positions that follow the format of the structure named Position*/
 			Position[] directions = new Position[]
@@ -281,17 +293,16 @@ namespace Snake
 			};
 
 			Program program = new Program();
+			program.helpMenu();
 			program.playBackgroundSound();
 
 			program.placeObstacles(obstacles);
 
 			//Create a Queue to store elements in FIFO (first-in, first out) style
 			Queue<Position> snakeElements = new Queue<Position>();
-			//int userPoints = (snakeElements.Count - 6) * 100 - negativePoints;
 			program.addSnakeElements(snakeElements);
-
 			program.displayLevel(lvlNum);
-			program.displayScore(snakeElements, negativePoints);
+			program.displayScore(snakeElements, negativePoints, bonus);
 
 			///<summary>
 			/// Set up and draw the food of the snake at random position.
@@ -304,7 +315,16 @@ namespace Snake
 			}
 			while (snakeElements.Contains(food) || obstacles.Contains(food));
 
+			Position bonusfood;
+			do
+			{
+				bonusfood = new Position(randomNumbersGenerator.Next(0, Console.WindowHeight),
+					randomNumbersGenerator.Next(0, Console.WindowWidth));
+			}
+			while (snakeElements.Contains(bonusfood) || obstacles.Contains(bonusfood));
+
 			program.drawFood(food);
+			program.drawSpecialFood(bonusfood, randomNumbersGenerator, eatenTimes);
 			program.drawSnakeBody(snakeElements);
 
 			///<summary>
@@ -313,26 +333,33 @@ namespace Snake
 			while (true)
 			{
 				//negativePoints++;
-
 				if (Console.KeyAvailable)
 				{
-					ConsoleKeyInfo userInput = Console.ReadKey();
-					if (userInput.Key == ConsoleKey.LeftArrow)
+					ConsoleKeyInfo userInput = new ConsoleKeyInfo();
+					do
 					{
-						if (direction != right) direction = left;
-					}
-					if (userInput.Key == ConsoleKey.RightArrow)
-					{
-						if (direction != left) direction = right;
-					}
-					if (userInput.Key == ConsoleKey.UpArrow)
-					{
-						if (direction != down) direction = up;
-					}
-					if (userInput.Key == ConsoleKey.DownArrow)
-					{
-						if (direction != up) direction = down;
-					}
+						if (Console.KeyAvailable == false) { }
+
+						userInput = Console.ReadKey(true);
+						if (userInput.Key == ConsoleKey.LeftArrow)
+						{
+							if (direction != right) direction = left;
+						}
+						if (userInput.Key == ConsoleKey.RightArrow)
+						{
+							if (direction != left) direction = right;
+						}
+						if (userInput.Key == ConsoleKey.UpArrow)
+						{
+							if (direction != down) direction = up;
+						}
+						if (userInput.Key == ConsoleKey.DownArrow)
+						{
+							if (direction != up) direction = down;
+						}
+
+					} while (userInput.Key != ConsoleKey.LeftArrow && userInput.Key != ConsoleKey.RightArrow &&
+							userInput.Key != ConsoleKey.UpArrow && userInput.Key != ConsoleKey.DownArrow);
 				}
 
 				//snakeHead is the last element of snakeElements
@@ -359,7 +386,7 @@ namespace Snake
 				/// </summary>
 				if (snakeElements.Contains(snakeNewHead) || obstacles.Contains(snakeNewHead))
 				{
-					program.gameOver(snakeElements, negativePoints, lvlNum, foodDissapearTime, eatenTimes);
+					program.gameOver(snakeElements, negativePoints, bonus, lvlNum);
 
 					string action = Console.ReadLine(); //Enter key pressed, exit game
 					if (action == "")
@@ -380,7 +407,7 @@ namespace Snake
 				/// </summary>
 				snakeElements.Enqueue(snakeNewHead);
 				program.displayLevel(lvlNum);
-				program.displayScore(snakeElements, negativePoints);
+				program.displayScore(snakeElements, negativePoints, bonus);
 
 				Console.SetCursorPosition(snakeNewHead.col, snakeNewHead.row);
 				Console.ForegroundColor = ConsoleColor.Gray;
@@ -390,8 +417,11 @@ namespace Snake
 				///<summary>
 				/// Creation of the new food after the snake ate the previous food.
 				/// </summary>
-				if (snakeNewHead.col == food.col && snakeNewHead.row == food.row)
+				if ((snakeNewHead.col == food.col && snakeNewHead.row == food.row) || (snakeNewHead.col == food.col + 1 && snakeNewHead.row == food.row))
 				{
+					Console.SetCursorPosition(food.col, food.row);
+					Console.Write("  ");
+
 					eatenTimes++;
 
 					if (eatenTimes == 2)
@@ -429,10 +459,12 @@ namespace Snake
 							randomNumbersGenerator.Next(0, Console.WindowWidth));
 					}
 					while (snakeElements.Contains(food) || obstacles.Contains(food));
-
-					program.winGame(negativePoints, eatenTimes, lvlNum, snakeElements);
+					program.winGame(negativePoints, eatenTimes, snakeElements, bonus, lvlNum);
 
 					program.drawFood(food);
+
+					program.drawSpecialFood(bonusfood, randomNumbersGenerator, eatenTimes);
+
 					lastFoodTime = Environment.TickCount;
 					sleepTime--;
 
@@ -455,7 +487,65 @@ namespace Snake
 					obstacles.Add(obstacle);
 					Console.SetCursorPosition(obstacle.col, obstacle.row);
 					Console.ForegroundColor = ConsoleColor.Cyan;
-					Console.Write("=");
+					Console.Write("▒");
+				}
+				else if (snakeNewHead.col == bonusfood.col && snakeNewHead.row == bonusfood.row)
+				{
+					eatenTimes++;
+					bonus += 100;
+
+					if (eatenTimes == 2)
+					{
+						lvlNum++;
+						program.displayLevel(lvlNum);
+						foodDissapearTime = 8000;
+					}
+
+					if (eatenTimes == 3)
+					{
+						lvlNum++;
+						program.displayLevel(lvlNum);
+						foodDissapearTime = 7000;
+					}
+
+					if (eatenTimes == 4)
+					{
+						lvlNum++;
+						program.displayLevel(lvlNum);
+						foodDissapearTime = 6000;
+					}
+
+					if (eatenTimes == 5)
+					{
+						lvlNum++;
+						program.displayLevel(lvlNum);
+					}
+
+					program.winGame(negativePoints, eatenTimes, snakeElements, bonus, lvlNum);
+
+					lastFoodTime = Environment.TickCount;
+					sleepTime--;
+
+					///<summary>
+					/// Create new obstacle in new position.
+					/// </summary>
+					Position obstacle = new Position();
+					do
+					{
+						obstacle = new Position(randomNumbersGenerator.Next(0, Console.WindowHeight),
+							randomNumbersGenerator.Next(0, Console.WindowWidth));
+					}
+
+					///<summary>
+					/// Draw the obstacle on the game screen in random position.
+					/// </summary>
+					while (snakeElements.Contains(obstacle) ||
+						obstacles.Contains(obstacle) ||
+						(food.row != obstacle.row && food.col != obstacle.row));
+					obstacles.Add(obstacle);
+					Console.SetCursorPosition(obstacle.col, obstacle.row);
+					Console.ForegroundColor = ConsoleColor.Cyan;
+					Console.Write("▒");
 				}
 				else
 				{
@@ -463,7 +553,7 @@ namespace Snake
 					Position last = snakeElements.Dequeue();
 					Console.SetCursorPosition(last.col, last.row);
 					Console.Write(" ");
-					program.displayScore(snakeElements, negativePoints);
+					program.displayScore(snakeElements, negativePoints, bonus);
 				}
 
 				///<summary>
@@ -475,11 +565,11 @@ namespace Snake
 
 					if (negativePoints >= 200)
 					{
-						program.gameOver(snakeElements, negativePoints, lvlNum, foodDissapearTime, eatenTimes);
+						program.gameOver(snakeElements, negativePoints, bonus, lvlNum);
 					}
 
 					Console.SetCursorPosition(food.col, food.row);
-					Console.Write(" ");
+					Console.Write("  ");
 					do
 					{
 						food = new Position(randomNumbersGenerator.Next(0, Console.WindowHeight),
@@ -496,6 +586,5 @@ namespace Snake
 				Thread.Sleep((int)sleepTime);
 			}
 		}
-
 	}
 }

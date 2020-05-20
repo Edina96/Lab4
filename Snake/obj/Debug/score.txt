@@ -1,12 +1,6 @@
-<<<<<<< HEAD
 YOU WIN!
 Game Level: 5
 Food Eaten Times: 5
-Points: 150
-Negative Points: 150
-=======
-YOU LOSE!
-Points: -200
-Negative Points: 0
-Bonus: 0
->>>>>>> add-correction
+Points: 350
+Negative Points: 50
+Bonus: 100
