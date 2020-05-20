@@ -105,16 +105,6 @@ namespace Snake
 			}
 		}
 
-		public void drawSpecialFood(Position bonusfood, Random randomNumbersGenerator, int eatenTimes)
-		{
-			if (eatenTimes == 2)
-			{
-				Console.SetCursorPosition(bonusfood.col, bonusfood.row);
-				Console.ForegroundColor = ConsoleColor.Magenta;
-				Console.Write("%");
-			}
-		}
-
 		public void addSnakeElements(Queue<Position> snakeElements)
 		{
 			for (int i = 0; i <= 3; i++)
@@ -343,26 +333,33 @@ namespace Snake
 			while (true)
 			{
 				//negativePoints++;
-
 				if (Console.KeyAvailable)
 				{
-					ConsoleKeyInfo userInput = Console.ReadKey();
-					if (userInput.Key == ConsoleKey.LeftArrow)
+					ConsoleKeyInfo userInput = new ConsoleKeyInfo();
+					do
 					{
-						if (direction != right) direction = left;
-					}
-					if (userInput.Key == ConsoleKey.RightArrow)
-					{
-						if (direction != left) direction = right;
-					}
-					if (userInput.Key == ConsoleKey.UpArrow)
-					{
-						if (direction != down) direction = up;
-					}
-					if (userInput.Key == ConsoleKey.DownArrow)
-					{
-						if (direction != up) direction = down;
-					}
+						if (Console.KeyAvailable == false) { }
+
+						userInput = Console.ReadKey(true);
+						if (userInput.Key == ConsoleKey.LeftArrow)
+						{
+							if (direction != right) direction = left;
+						}
+						if (userInput.Key == ConsoleKey.RightArrow)
+						{
+							if (direction != left) direction = right;
+						}
+						if (userInput.Key == ConsoleKey.UpArrow)
+						{
+							if (direction != down) direction = up;
+						}
+						if (userInput.Key == ConsoleKey.DownArrow)
+						{
+							if (direction != up) direction = down;
+						}
+
+					} while (userInput.Key != ConsoleKey.LeftArrow && userInput.Key != ConsoleKey.RightArrow &&
+							userInput.Key != ConsoleKey.UpArrow && userInput.Key != ConsoleKey.DownArrow);
 				}
 
 				//snakeHead is the last element of snakeElements
@@ -420,7 +417,7 @@ namespace Snake
 				///<summary>
 				/// Creation of the new food after the snake ate the previous food.
 				/// </summary>
-				if ((snakeNewHead.col == food.col && snakeNewHead.row == food.row)  || (snakeNewHead.col == food.col + 1 && snakeNewHead.row == food.row))
+				if ((snakeNewHead.col == food.col && snakeNewHead.row == food.row) || (snakeNewHead.col == food.col + 1 && snakeNewHead.row == food.row))
 				{
 					Console.SetCursorPosition(food.col, food.row);
 					Console.Write("  ");
