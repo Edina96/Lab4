@@ -83,7 +83,7 @@ namespace Snake
 			{
 				Console.ForegroundColor = ConsoleColor.Cyan;
 				Console.SetCursorPosition(obstacle.col, obstacle.row);
-				Console.Write("="); //A method to display value, in this case "="
+				Console.Write("▒");
 			}
 		}
 
@@ -91,7 +91,18 @@ namespace Snake
 		{
 			Console.SetCursorPosition(food.col, food.row);
 			Console.ForegroundColor = ConsoleColor.Yellow;
-			Console.Write("@");
+			Console.OutputEncoding = System.Text.Encoding.UTF8;
+			Console.Write("♥♥");
+		}
+
+		public void drawSpecialFood(Position bonusfood, Random randomNumbersGenerator, int eatenTimes)
+		{
+			if (eatenTimes == 2)
+			{
+				Console.SetCursorPosition(bonusfood.col, bonusfood.row);
+				Console.ForegroundColor = ConsoleColor.Magenta;
+				Console.Write("%");
+			}
 		}
 
 		public void drawSpecialFood(Position bonusfood, Random randomNumbersGenerator, int eatenTimes)
@@ -409,8 +420,11 @@ namespace Snake
 				///<summary>
 				/// Creation of the new food after the snake ate the previous food.
 				/// </summary>
-				if (snakeNewHead.col == food.col && snakeNewHead.row == food.row)
+				if ((snakeNewHead.col == food.col && snakeNewHead.row == food.row)  || (snakeNewHead.col == food.col + 1 && snakeNewHead.row == food.row))
 				{
+					Console.SetCursorPosition(food.col, food.row);
+					Console.Write("  ");
+
 					eatenTimes++;
 
 					if (eatenTimes == 2)
@@ -476,14 +490,41 @@ namespace Snake
 					obstacles.Add(obstacle);
 					Console.SetCursorPosition(obstacle.col, obstacle.row);
 					Console.ForegroundColor = ConsoleColor.Cyan;
-					Console.Write("=");
+					Console.Write("▒");
 				}
 				else if (snakeNewHead.col == bonusfood.col && snakeNewHead.row == bonusfood.row)
 				{
 					eatenTimes++;
 					bonus += 100;
 
-					//program.winGame(negativePoints, eatenTimes, snakeElements, bonus);
+					if (eatenTimes == 2)
+					{
+						lvlNum++;
+						program.displayLevel(lvlNum);
+						foodDissapearTime = 8000;
+					}
+
+					if (eatenTimes == 3)
+					{
+						lvlNum++;
+						program.displayLevel(lvlNum);
+						foodDissapearTime = 7000;
+					}
+
+					if (eatenTimes == 4)
+					{
+						lvlNum++;
+						program.displayLevel(lvlNum);
+						foodDissapearTime = 6000;
+					}
+
+					if (eatenTimes == 5)
+					{
+						lvlNum++;
+						program.displayLevel(lvlNum);
+					}
+
+					program.winGame(negativePoints, eatenTimes, snakeElements, bonus, lvlNum);
 
 					lastFoodTime = Environment.TickCount;
 					sleepTime--;
@@ -507,7 +548,7 @@ namespace Snake
 					obstacles.Add(obstacle);
 					Console.SetCursorPosition(obstacle.col, obstacle.row);
 					Console.ForegroundColor = ConsoleColor.Cyan;
-					Console.Write("=");
+					Console.Write("▒");
 				}
 				else
 				{
@@ -531,7 +572,7 @@ namespace Snake
 					}
 
 					Console.SetCursorPosition(food.col, food.row);
-					Console.Write(" ");
+					Console.Write("  ");
 					do
 					{
 						food = new Position(randomNumbersGenerator.Next(0, Console.WindowHeight),
