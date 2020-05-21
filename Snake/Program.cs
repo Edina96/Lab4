@@ -109,7 +109,7 @@ namespace Snake
 		{
 			for (int i = 0; i <= 3; i++)
 			{
-				snakeElements.Enqueue(new Position(0, i)); //add item to the list
+				snakeElements.Enqueue(new Position(4, i)); //add item to the list
 			}
 		}
 
@@ -249,6 +249,16 @@ namespace Snake
 			Console.Write(lvl);
 		}
 
+		public void createBoundary()
+		{
+			int width = Console.BufferWidth;
+			Console.SetCursorPosition(0, 2);
+			for (int i = 1; i <= width; i++)
+			{
+				Console.Write("-");
+			}
+		}
+
 		//Defines the Main method
 		static void Main(string[] args)
 		{
@@ -311,7 +321,7 @@ namespace Snake
 			do
 			{
 				food = new Position(randomNumbersGenerator.Next(0, Console.WindowHeight),
-					randomNumbersGenerator.Next(0, Console.WindowWidth));
+									randomNumbersGenerator.Next(4, Console.WindowWidth));
 			}
 			while (snakeElements.Contains(food) || obstacles.Contains(food));
 
@@ -319,7 +329,7 @@ namespace Snake
 			do
 			{
 				bonusfood = new Position(randomNumbersGenerator.Next(0, Console.WindowHeight),
-					randomNumbersGenerator.Next(0, Console.WindowWidth));
+					randomNumbersGenerator.Next(4, Console.WindowWidth));
 			}
 			while (snakeElements.Contains(bonusfood) || obstacles.Contains(bonusfood));
 
@@ -381,10 +391,70 @@ namespace Snake
 				if (snakeNewHead.row >= Console.WindowHeight) snakeNewHead.row = 0;
 				if (snakeNewHead.col >= Console.WindowWidth) snakeNewHead.col = 0;
 
+				program.createBoundary();
+				if ((snakeHead.row == 4) || (snakeNewHead.row == 4))
+				{
+					if (Console.KeyAvailable)
+					{
+						ConsoleKeyInfo userInput = Console.ReadKey();
+
+						do
+						{
+							if (Console.KeyAvailable == false) { }
+
+							userInput = Console.ReadKey(true);
+							if (userInput.Key == ConsoleKey.LeftArrow)
+							{
+								if (direction != right) direction = left;
+							}
+							if (userInput.Key == ConsoleKey.RightArrow)
+							{
+								if (direction != left) direction = right;
+							}
+							if (userInput.Key == ConsoleKey.UpArrow)
+							{
+								if (direction != down) direction = up;
+							}
+							if (userInput.Key == ConsoleKey.DownArrow)
+							{
+								if (direction != up) direction = down;
+							}
+						} while (userInput.Key != ConsoleKey.LeftArrow && userInput.Key != ConsoleKey.RightArrow && userInput.Key != ConsoleKey.UpArrow && userInput.Key != ConsoleKey.DownArrow);
+
+					}
+					else { }
+				}
+				else {
+					if (Console.KeyAvailable)
+					{
+						ConsoleKeyInfo userInput = Console.ReadKey();
+
+						do
+						{
+							if (Console.KeyAvailable == false) { }
+
+							userInput = Console.ReadKey(true);
+							if (userInput.Key == ConsoleKey.LeftArrow)
+							{
+								if (direction != right) direction = left;
+							}
+							if (userInput.Key == ConsoleKey.RightArrow)
+							{
+								if (direction != left) direction = right;
+							}
+							if (userInput.Key == ConsoleKey.DownArrow)
+							{
+								if (direction != up) direction = down;
+							}
+						} while (userInput.Key != ConsoleKey.LeftArrow && userInput.Key != ConsoleKey.RightArrow && userInput.Key != ConsoleKey.DownArrow);
+
+					}
+				}
+
 				///<summary>
 				/// End the game and print the score(s) of the user when the snake hit the obstacles.
 				/// </summary>
-				if (snakeElements.Contains(snakeNewHead) || obstacles.Contains(snakeNewHead))
+				if (snakeElements.Contains(snakeNewHead) || obstacles.Contains(snakeNewHead) || (snakeHead.row < 2) || (snakeNewHead.row < 2) || (snakeHead.row == Console.WindowHeight) || (snakeNewHead.row == Console.WindowHeight))
 				{
 					program.gameOver(snakeElements, negativePoints, bonus, lvlNum);
 
@@ -456,7 +526,7 @@ namespace Snake
 					do
 					{
 						food = new Position(randomNumbersGenerator.Next(0, Console.WindowHeight),
-							randomNumbersGenerator.Next(0, Console.WindowWidth));
+							randomNumbersGenerator.Next(4, Console.WindowWidth));
 					}
 					while (snakeElements.Contains(food) || obstacles.Contains(food));
 					program.winGame(negativePoints, eatenTimes, snakeElements, bonus, lvlNum);
@@ -475,7 +545,7 @@ namespace Snake
 					do
 					{
 						obstacle = new Position(randomNumbersGenerator.Next(0, Console.WindowHeight),
-							randomNumbersGenerator.Next(0, Console.WindowWidth));
+							randomNumbersGenerator.Next(4, Console.WindowWidth));
 					}
 
 					///<summary>
@@ -533,7 +603,7 @@ namespace Snake
 					do
 					{
 						obstacle = new Position(randomNumbersGenerator.Next(0, Console.WindowHeight),
-							randomNumbersGenerator.Next(0, Console.WindowWidth));
+							randomNumbersGenerator.Next(4, Console.WindowWidth));
 					}
 
 					///<summary>
@@ -573,7 +643,7 @@ namespace Snake
 					do
 					{
 						food = new Position(randomNumbersGenerator.Next(0, Console.WindowHeight),
-							randomNumbersGenerator.Next(0, Console.WindowWidth));
+							randomNumbersGenerator.Next(4, Console.WindowWidth));
 					}
 					while (snakeElements.Contains(food) || obstacles.Contains(food));
 					lastFoodTime = Environment.TickCount;
